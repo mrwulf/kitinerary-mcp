@@ -9,6 +9,12 @@ Most real airline/hotel confirmation emails already embed this JSON-LD (it's the
 - **Is**: a single tool, `extract_booking`, that takes a file and returns raw JSON-LD (or nothing, if the extractor finds nothing). No outbound network calls, no secrets, no state — every call is an isolated subprocess against a temp file, cleaned up immediately after.
 - **Isn't**: a booking-type mapper. It does not translate the JSON-LD into any particular app's reservation schema — that's a deliberate boundary, so this stays reusable across whatever consumer calls it rather than coupled to one caller's data model.
 
+## How it's used
+
+This server powers the deterministic extraction stage of a self-hosted [TripIt](https://www.tripit.com/) replacement: forward a booking confirmation email, an n8n workflow calls `extract_booking` on it, and a matched result gets mapped and written into [Trek](https://github.com/Kurea/trek) as a trip — no LLM involved for the common case, with an LLM fallback only for emails this server finds nothing in. See [`tripit_replacement.md`](https://github.com/mrwulf/home-cluster/blob/main/docs/tripit_replacement.md) in that pipeline's repo for the full architecture, the JSON-LD-to-booking mapping table this server's output feeds into, and the gotchas found integrating it (some datetime fields come back as `{"@type":"QDateTime",...}` objects rather than plain strings, multi-leg/multi-passenger handling, and more).
+
+That pipeline is one consumer, not a dependency this server has on it — nothing in this repo is coupled to it, and any MCP client can use `extract_booking` the same way. If you build something else on top of this server, opening a PR to list it here is welcome.
+
 ## Tool interface
 
 ```
