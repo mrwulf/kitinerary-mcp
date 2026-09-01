@@ -1,0 +1,33 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    ":semanticCommits",
+    ":separatePatchReleases",
+    ":automergeDigest",
+  ],
+  enabled: true,
+  dependencyDashboardTitle: "Renovate Dashboard",
+  rebaseWhen: "conflicted",
+  // Three things are tracked, matching the README's "How versions are
+  // tracked" section:
+  // 1. FROM debian:trixie-slim - native dockerfile/docker-datasource manager.
+  // 2. ARG KITINERARY_VERSION - native dockerfile manager reads the
+  //    `# renovate: depName=... datasource=...` comment already in the
+  //    Dockerfile; it's a freshness signal only (see README for why the
+  //    Debian package revision suffix can't be fully automated).
+  // 3. mcp==2.1.1 in requirements.txt - native pip_requirements manager.
+  // GitHub Actions in .github/workflows/ are tracked natively too.
+  packageRules: [
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["debian"],
+      commitMessageTopic: "base image {{depName}}",
+    },
+    {
+      matchDatasources: ["github-releases"],
+      matchPackageNames: ["KDE/kitinerary"],
+      commitMessageTopic: "kitinerary-extractor version (freshness signal)",
+    },
+  ],
+}
