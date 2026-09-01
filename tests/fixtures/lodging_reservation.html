@@ -1,0 +1,28 @@
+<html>
+  <body>
+    <p>Thank you for booking Test Hotel Sandbox.</p>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "LodgingReservation",
+        "reservationNumber": "TEST-0001",
+        "reservationStatus": "http://schema.org/ReservationConfirmed",
+        "underName": { "@type": "Person", "name": "Test Traveler" },
+        "reservationFor": {
+          "@type": "LodgingBusiness",
+          "name": "Test Hotel Sandbox",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Austin",
+            "addressRegion": "TX",
+            "addressCountry": "US"
+          }
+        },
+        "checkinTime": "2031-09-10T15:00:00-05:00",
+        "checkoutTime": "2031-09-12T11:00:00-05:00",
+        "totalPrice": "450.50",
+        "priceCurrency": "USD"
+      }
+    </script>
+  </body>
+</html>

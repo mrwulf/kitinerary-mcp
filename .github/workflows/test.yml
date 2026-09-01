@@ -1,0 +1,31 @@
+---
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Run unit tests
+        run: pytest tests/test_server.py -v
+
+      - name: Build image
+        run: docker build -t kitinerary-mcp:test .
+
+      - name: Run integration tests against the built image
+        env:
+          IMAGE_TAG: kitinerary-mcp:test
+        run: pytest tests/test_integration.py -v
