@@ -41,11 +41,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Derive versions
+        id: versions
+        run: |
+          SERVER_VERSION="${GITHUB_REF_NAME#v}"
+          KITINERARY_VERSION="$(grep -oP '(?<=^ARG KITINERARY_VERSION=)\S+' Dockerfile)"
+          echo "server_version=${SERVER_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "kitinerary_version=${KITINERARY_VERSION}" >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          build-args: |
+            SERVER_VERSION=${{ steps.versions.outputs.server_version }}
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-kitinerary${{ steps.versions.outputs.kitinerary_version }}
             ghcr.io/${{ github.repository }}:latest

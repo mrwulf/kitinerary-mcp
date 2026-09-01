@@ -24,7 +24,16 @@ MAX_FILE_BYTES = 10 * 1024 * 1024  # 10 MB, matches Trek's own booking-import li
 EXTRACTION_TIMEOUT_SECONDS = 60
 ACCEPTED_EXTENSIONS = {".eml", ".pdf", ".pkpass", ".html", ".txt"}
 
-mcp = MCPServer("kitinerary-extractor")
+# Two independently-versioned things (see README "Keeping this current"):
+# this server's own version, and the kitinerary-extractor build it wraps.
+# Both are baked into the image as env vars at build time (Dockerfile ARGs).
+SERVER_VERSION = os.environ.get("SERVER_VERSION", "0.0.0-dev")
+KITINERARY_VERSION = os.environ.get("KITINERARY_VERSION", "unknown")
+
+mcp = MCPServer(
+    "kitinerary-extractor",
+    version=f"{SERVER_VERSION}+kitinerary.{KITINERARY_VERSION}",
+)
 
 
 def _extract(file_base64: str, filename: str, context_date: str | None = None) -> dict:

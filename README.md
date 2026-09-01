@@ -47,6 +47,16 @@ Or point a [ToolHive](https://github.com/stacklok/toolhive) `MCPServer` at the s
 
 Always pin an exact tag; `latest` is published alongside each release for convenience but isn't meant to be what you deploy against.
 
+### Tags and version strings
+
+Every release publishes three tags:
+
+- `vX.Y.Z` — this server's own version, e.g. `v0.1.0`. Pin this in normal use.
+- `vX.Y.Z-kitineraryA.B.C` — the same build, with the bundled `kitinerary-extractor` release folded into the tag (e.g. `v0.1.0-kitinerary24.12.3`), so you can tell which upstream KDE release a given build carries without pulling it or reading the Dockerfile. Pin this instead if your own compatibility depends on a specific `kitinerary` behavior.
+- `latest` — convenience only, not for pinning.
+
+The same two version numbers are also on the image itself, so you don't have to trust the tag alone: as OCI labels (`org.opencontainers.image.version`, `io.github.mrwulf.kitinerary-mcp.kitinerary-version`) readable via `docker inspect`, and in the running server's own MCP `version` field (`0.1.0+kitinerary.24.12.3`, semver build-metadata form) that any MCP client can read after connecting.
+
 ## Development
 
 ```sh
